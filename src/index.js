@@ -11,7 +11,7 @@ import { WaterPass } from './Waterpass'
 import { Effects } from '@react-three/drei/Effects'
 import './styles.css'
 
-// UnrealBloomPass => <unrealBloomPass />に変換
+// UnrealBloomPass => <unrealBloomPass />としてつかえるよう変換
 extend({ EffectComposer, ShaderPass, RenderPass, WaterPass, AfterimagePass, UnrealBloomPass })
 
 function Swarm({ count }) {

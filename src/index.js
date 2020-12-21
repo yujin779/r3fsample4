@@ -74,6 +74,7 @@ function Swarm({ count }) {
   )
 }
 
+// これだけでカメラのドリーを繰り返す
 function Dolly() {
   // This one makes the camera move in and out
   useFrame(({ clock, camera }) => {
@@ -87,12 +88,14 @@ function App() {
     <Canvas camera={{ fov: 75, position: [0, 0, 70] }}>
       <pointLight intensity={0.2} color="white" />
       <spotLight intensity={0.2} position={[70, 70, 70]} penumbra={1} color="lightblue" />
-      <Swarm count={20000} />
+      <Swarm count={20} />
       <Effects>
-        <waterPass attachArray="passes" factor={2} />
-        <unrealBloomPass attachArray="passes" args={[undefined, 1.5, 1, 0]} />
+        {/* 水の中を揺らめくようなエフェクト */}
+        {/* <waterPass attachArray="passes" factor={2} /> */}
+        {/* ネオンの灯りのようなエフェクト */}
+        {/* <unrealBloomPass attachArray="passes" args={[undefined, 1.5, 1, 0]} /> */}
       </Effects>
-      <Dolly />
+      {/* <Dolly /> */}
     </Canvas>
   )
 }

@@ -12,16 +12,21 @@ import { WaterPass } from './Waterpass'
 import { Effects } from '@react-three/drei/Effects'
 import './styles.css'
 
-// Makes these prototypes available as "native" jsx-string elements
+// UnrealBloomPass => <unrealBloomPass />に変換
 extend({ EffectComposer, ShaderPass, RenderPass, WaterPass, AfterimagePass, UnrealBloomPass })
 
 function Swarm({ count }) {
+  // meshを操作
   const mesh = useRef()
+  // lightを操作
   const light = useRef()
   const { viewport, mouse } = useThree()
 
+  // meshの情報を更新するための一時的に保存
   const dummy = useMemo(() => new THREE.Object3D(), [])
-  // Generate some random positions, speed factors and timings
+  /** countの数だけparticleの情報がある配列を作成
+   *  countの数が変更されたら作成しなおす
+   */
   const particles = useMemo(() => {
     const temp = []
     for (let i = 0; i < count; i++) {
@@ -35,9 +40,9 @@ function Swarm({ count }) {
     }
     return temp
   }, [count])
-  // The innards of this hook will run every frame
+  // 毎フレーム実行
   useFrame((state) => {
-    // Makes the light follow the mouse
+    // pointLightをマウスの位置に設定
     light.current.position.set((mouse.x * viewport.width) / 2, (mouse.y * viewport.height) / 2, 0)
     // Run through the randomized data to calculate some movement
     particles.forEach((particle, i) => {
@@ -61,11 +66,13 @@ function Swarm({ count }) {
       // And apply the matrix to the instanced item
       mesh.current.setMatrixAt(i, dummy.matrix)
     })
+    //meshの情報を更新
     mesh.current.instanceMatrix.needsUpdate = true
   })
   return (
     <>
       <pointLight ref={light} distance={60} intensity={0.2} color="lightblue" />
+      {/* InstancedMeshコンストラクタ（ジオメトリ：BufferGeometry、マテリアル：マテリアル、カウント：整数） */}
       <instancedMesh ref={mesh} args={[null, null, count]}>
         <dodecahedronBufferGeometry args={[1, 0]} />
         <meshStandardMaterial color="black" />
@@ -88,14 +95,14 @@ function App() {
     <Canvas camera={{ fov: 75, position: [0, 0, 70] }}>
       <pointLight intensity={0.2} color="white" />
       <spotLight intensity={0.2} position={[70, 70, 70]} penumbra={1} color="lightblue" />
-      <Swarm count={20} />
+      <Swarm count={20000} />
       <Effects>
         {/* 水の中を揺らめくようなエフェクト */}
-        {/* <waterPass attachArray="passes" factor={2} /> */}
+        <waterPass attachArray="passes" factor={2} />
         {/* ネオンの灯りのようなエフェクト */}
-        {/* <unrealBloomPass attachArray="passes" args={[undefined, 1.5, 1, 0]} /> */}
+        <unrealBloomPass attachArray="passes" args={[undefined, 1.5, 1, 0]} />
       </Effects>
-      {/* <Dolly /> */}
+      <Dolly />
     </Canvas>
   )
 }
